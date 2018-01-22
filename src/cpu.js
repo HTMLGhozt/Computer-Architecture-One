@@ -130,7 +130,7 @@ class CPU {
         const reg = this.ram.read(this.reg.PC + 1);
         const val = this.ram.read(this.reg.PC + 2);
         this.reg[reg] = val;
-        this.reg.PC = this.reg.PC + 3;
+        this.reg.PC += 3;
     }
 
     /**
@@ -142,7 +142,7 @@ class CPU {
         const regB = this.ram.read(this.reg.PC + 2);
 
         this.alu('MUL', regA, regB);
-        this.reg.PC = this.reg.PC + 3;
+        this.reg.PC += 3;
     }
 
     /**
@@ -152,7 +152,7 @@ class CPU {
         // !!! IMPLEMENT ME
         const reg = this.ram.read(this.reg.PC + 1);
         console.log(this.reg[reg]);
-        this.reg.PC = this.reg.PC + 2;        
+        this.reg.PC += 2;        
     }
 }
 
