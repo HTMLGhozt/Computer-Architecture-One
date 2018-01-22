@@ -16,19 +16,16 @@ function processFile(content, cpu, onComplete) {
     // Loop through each line of machine code
 
     for (let line of lines) {
-
         // !!! IMPLEMENT ME
-
         // Strip comments
-
         // Remove whitespace from either end of the line
-
+        line = line.replace(/#(.*)|\s/g, '');
         // Ignore empty lines
-
+        if (line = '') { continue; }
         // Convert from binary string to numeric value
-
+        Number(line);
         // Store in the CPU with the .poke() function
-
+        console.log(line);
         // And on to the next one
         curAddr++;
     }

@@ -6,11 +6,11 @@ const fs = require('fs');
 
 // Instructions
 
-const HLT  = 0b00011011; // Halt CPU
+const HLT = 0b00011011; // Halt CPU
 // !!! IMPLEMENT ME
-// LDI
-// MUL
-// PRN
+const LDI = 0b00000100; // LDI
+const MUL = 0b00000100; // MUL
+const PRN = 0b00000110; // PRN
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -36,13 +36,13 @@ class CPU {
 	 * Sets up the branch table
 	 */
 	setupBranchTable() {
-		let bt = {};
+		const bt = {};
 
         bt[HLT] = this.HLT;
         // !!! IMPLEMENT ME
-        // LDI
-        // MUL
-        // PRN
+        bt[LDI] = this.LDI; // LDI
+        bt[MUL] = this.MUL; // MUL
+        bt[PRN] = this.PRN; // PRN
 
 		this.branchTable = bt;
 	}
@@ -81,7 +81,14 @@ class CPU {
         switch (op) {
             case 'MUL':
                 // !!! IMPLEMENT ME
+                this.MUL(regA, regB);
                 break;
+            case 'ADD':
+            case 'SUB':
+            case 'DIV':
+            case 'INC':
+            case 'DEC':
+            case 'CMP':
         }
     }
 
@@ -90,11 +97,10 @@ class CPU {
      */
     tick() {
         // !!! IMPLEMENT ME
-
         // Load the instruction register from the current PC
 
         // Debugging output
-        //console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
+        console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
 
         // Based on the value in the Instruction Register, jump to the
         // appropriate hander in the branchTable
@@ -114,27 +120,31 @@ class CPU {
      */
     HLT() {
         // !!! IMPLEMENT ME
+        this.stopClock();
     }
 
     /**
      * LDI R,I
      */
-    LDI() {
+    LDI(i, value) {
         // !!! IMPLEMENT ME
+        this.reg[i] = value;
     }
 
     /**
      * MUL R,R
      */
-    MUL() {
+    MUL(regA, regB) {
         // !!! IMPLEMENT ME
+        this.reg[regA] *= this.reg[regB];
     }
 
     /**
      * PRN R
      */
-    PRN() {
+    PRN(i) {
         // !!! IMPLEMENT ME
+        console.log(this.reg[i]);
     }
 }
 
