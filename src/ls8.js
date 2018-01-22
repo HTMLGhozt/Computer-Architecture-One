@@ -14,18 +14,17 @@ function processFile(content, cpu, onComplete) {
     const lines = content.split('\n');
 
     // Loop through each line of machine code
-
     for (let line of lines) {
         // !!! IMPLEMENT ME
         // Strip comments
         // Remove whitespace from either end of the line
         line = line.replace(/#(.*)|\s/g, '');
         // Ignore empty lines
-        if (line = '') { continue; }
+        if (line.length === 0) { continue; }
         // Convert from binary string to numeric value
-        Number(line);
+        const val = parseInt(line, 2);
         // Store in the CPU with the .poke() function
-        console.log(line);
+        cpu.poke(curAddr, val);
         // And on to the next one
         curAddr++;
     }
@@ -69,7 +68,6 @@ function onFileLoaded(cpu) {
 
 let ram = new RAM(256);
 let cpu = new CPU(ram);
-
 // Get remaining command line arguments
 const argv = process.argv.slice(2);
 
