@@ -79,7 +79,7 @@ class CPU {
         switch (op) {
             case 'MUL':
                 // !!! IMPLEMENT ME
-                this.reg[regA] = (this.reg[regA] * this.reg[regB]) & 0b11111111;
+                this.reg[regA] *= this.reg[regB] & 0b11111111;
                 break;
             case 'ADD':
             case 'SUB':
@@ -97,8 +97,8 @@ class CPU {
         // !!! IMPLEMENT ME
         // Load the instruction register from the current PC
         this.reg.IR = this.ram.read(this.reg.PC);
-        // Debugging output
-        // console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`);
+
+        // console.log(`${this.reg.PC}: ${this.reg.IR.toString(2)}`); // Debugging output
 
         // Based on the value in the Instruction Register, jump to the
         // appropriate hander in the branchTable
@@ -127,22 +127,25 @@ class CPU {
      */
     LDI() {
         // !!! IMPLEMENT ME
-        const reg = this.ram.read(this.reg.PC + 1);
-        const val = this.ram.read(this.reg.PC + 2);
+        const [reg, val] = this.HELP(2);
         this.reg[reg] = val;
-        this.reg.PC += 3;
     }
-
+    HELP(n) {
+        const arr = [];
+        for (let i = 0; i < n; i++) {
+            arr.push(this.ram.read(++this.reg.PC));
+        }
+        this.reg.PC++
+        return arr;
+    }
     /**
      * MUL R,R
      */
     MUL() {
         // !!! IMPLEMENT ME
-        const regA = this.ram.read(this.reg.PC + 1);
-        const regB = this.ram.read(this.reg.PC + 2);
+        const [regA, regB] = this.HELP(2);
 
         this.alu('MUL', regA, regB);
-        this.reg.PC += 3;
     }
 
     /**
@@ -150,9 +153,8 @@ class CPU {
      */
     PRN() {
         // !!! IMPLEMENT ME
-        const reg = this.ram.read(this.reg.PC + 1);
+        const [reg] = this.HELP(1);
         console.log(this.reg[reg]);
-        this.reg.PC += 2;        
     }
 }
 
