@@ -53,7 +53,7 @@ class CPU {
   setupBranchTable() {
     const bt = {};
     bt[ADD] = this.ADD;
-    // bt[CAL] = this
+    bt[CAL] = this.CAL;
     bt[CMP] = this.CMP;
     bt[DEC] = this.DEC;
     bt[DIV] = this.DIV;
@@ -72,7 +72,7 @@ class CPU {
     // bt[PRA] = this
     bt[PRN] = this.PRN;
     bt[PSH] = this.PSH;
-    // bt[RET] = this
+    bt[RET] = this.RET;
     // bt[STR] = this
     bt[SUB] = this.SUB;
     this.branchTable = bt;
@@ -87,9 +87,10 @@ class CPU {
 
   /**
    * a helper function that increments the Program Counter (PC)
-    * and returns the instructions loaded in ram.
-    * @param {number} n - a positive number.
-    */
+   * and returns the instructions loaded in ram.
+   * @param {number} n - a positive number representative of the
+   * number of arguments the return value requires.
+   */
   helper(n) {
     const arr = [];
     for (let i = 0; i < n; i++) {
@@ -154,9 +155,12 @@ class CPU {
         this.reg[regA] -= 1 & 0b11111111;
         break;
       case 'DIV':
-        if (this.reg[regB] !== 0) {
-          this.reg[regA] /= this.reg[regB];
+        if (this.reg[regB] === 0) {
+          console.error('Unable to divide by 0.');
+          this.HLT();
+          break;
         }
+        this.reg[regA] /= this.reg[regB];
         break;
       case 'INC':
         this.reg[regA] += 1 & 0b11111111;
@@ -194,7 +198,12 @@ class CPU {
    * next instruction that will execute is pushed
    * onto the stack.
    */
-  CAL() {}
+  CAL() {
+    const reg = this.ram.read(this.reg.PC + 1);
+    this.reg[7] -= 1;
+    this.poke(this.reg[7], this.reg.PC + 2);
+    this.reg.PC = this.reg[reg];
+  }
 
   /**
    * CMP R,R
@@ -220,6 +229,11 @@ class CPU {
 
   /**
    * DIV R,R
+   *
+   * Divide the value in the first register by the value
+   * in the second, storing the result in registerA.
+   * If the value in the second register is 0,
+   * the system should print an error message and halt.
    */
   DIV() {
     const [regA, regB] = this.helper(2);
@@ -376,8 +390,20 @@ class CPU {
    * Pop the value from the top of the stack and
    * store it in the PC.
    */
-  RET() {}
+  RET() {
+    this.reg.PC = this.ram.read(this.reg[7]);
+    this.reg[7] += 1;
+  }
+  /**
+   *     _pop() {
+        const val = this.ram.read(this.reg[SP]);
 
+        // Increment SP, stack grows down from address 255
+        this.alu('INC', SP);
+
+        return val;
+    }
+   */
   /**
    * STR R,R
    *
