@@ -108,6 +108,15 @@ class CPU {
     this.clock = setInterval(() => {
       this.tick();
     }, 1);
+    this.timerHandle = setInterval(() => {
+      // trigger timer interrupt r5 is interrupt mask
+      this.reg[6] |= 0b00000001;
+    //   10010100 IS int7,4,2 have occured
+    // & 00000000 IM
+    //   --------
+    //   00000000
+
+    }, 1000);
   }
 
   /**
@@ -121,6 +130,15 @@ class CPU {
    * Advances the CPU one cycle
    */
   tick() {
+    // Interrupt stuff
+    if (this.reg[6] !== 0) {
+      console.error('interrupt');
+      this.reg[6] = 0;
+    }
+
+    // Check if interrupt happened
+    // if it did, jump to that interrupt
+
     // Load the instruction register from the current PC
     this.reg.IR = this.ram.read(this.reg.PC);
 
@@ -410,7 +428,9 @@ class CPU {
    * Store value in registerB in the address stored
    * in registerA.
    */
-  STR() {}
+  STR() {
+    const [regA, regB] = this.helper(2);
+  }
 
   /**
    * SUB R R
